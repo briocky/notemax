@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -56,12 +55,6 @@ public class User implements UserDetails {
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   List<Role> roles;
-
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "owner")
-  AccessToken accessToken;
-
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "owner")
-  RefreshToken refreshToken;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

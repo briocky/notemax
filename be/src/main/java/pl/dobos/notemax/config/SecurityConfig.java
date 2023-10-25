@@ -1,37 +1,36 @@
 package pl.dobos.notemax.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.dobos.notemax.filters.JwtTokenFilter;
-import pl.dobos.notemax.repositories.UserRepository;
-import pl.dobos.notemax.services.DbUserDetailsService;
-import pl.dobos.notemax.services.JwtTokenUtils;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+  private final JwtAuthConverter jwtAuthConverter;
+
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenFilter jwtTokenFilter) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults());
 
     http.authorizeHttpRequests(authorize -> authorize
-        .requestMatchers("/api/auth/**").permitAll());
+        .requestMatchers("/api/auth/**").permitAll()
+        .anyRequest().authenticated());
 
-    http.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
+    http.oauth2ResourceServer(oauth2 -> oauth2
+        .jwt(jwtConfigurer -> jwtConfigurer
+            .jwtAuthenticationConverter(jwtAuthConverter)));
 
     http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-    http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
@@ -39,15 +38,5 @@ public class SecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public UserDetailsService userDetailsService(UserRepository userRepository) {
-    return new DbUserDetailsService(userRepository);
-  }
-
-  @Bean
-  public JwtTokenFilter jwtTokenFilter(JwtTokenUtils jwtTokenUtils, UserDetailsService userDetailsService) {
-    return new JwtTokenFilter(jwtTokenUtils, userDetailsService);
   }
 }

@@ -1,67 +1,66 @@
 package pl.dobos.notemax.services;
 
 import jakarta.servlet.http.Cookie;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import pl.dobos.notemax.exceptions.AuthException;
-import pl.dobos.notemax.mappers.UserMapper;
 import pl.dobos.notemax.models.dtos.LoginRequest;
 import pl.dobos.notemax.models.dtos.LoginResponse;
 import pl.dobos.notemax.models.dtos.RegisterRequest;
 import pl.dobos.notemax.models.dtos.RegisterResponse;
-import pl.dobos.notemax.models.entities.User;
-import pl.dobos.notemax.repositories.UserRepository;
+import pl.dobos.notemax.models.dtos.keycloak.TokenResponse;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
-  private final UserRepository userRepository;
-  private final TokenService tokenService;
-  private final UserMapper userMapper;
-  private final PasswordEncoder passwordEncoder;
   private final CookieService cookieService;
+  private final KeycloakAdminClientService keycloakAdminClientService;
 
   public RegisterResponse register(RegisterRequest request) {
 
     final pl.dobos.notemax.models.dtos.User requestUser = request.getUser();
-    Optional<User> userByEmail = userRepository.findByEmail(requestUser.getEmail());
-    if (userByEmail.isPresent()) {
-      throw new AuthException("Email already taken");
+    int registerStatus = keycloakAdminClientService.registerKeycloakUser(requestUser);
+
+    if (registerStatus == HttpStatus.SC_CREATED) {
+      log.debug("User registered successfully, getting token...");
+
+      TokenResponse tokenResponse = keycloakAdminClientService.loginKeycloakUser(
+          request.getUser().getEmail(), request.getUser().getPassword());
+      Cookie refreshTokenCookie = cookieService.makeRefreshTokenCookie(
+          tokenResponse.getRefreshToken());
+
+      return RegisterResponse.builder()
+          .token(tokenResponse.getToken())
+          .refreshTokenCookie(refreshTokenCookie).build();
+    } else if (registerStatus == HttpStatus.SC_CONFLICT) {
+      throw new AuthException("User already exists!");
+    } else {
+      throw new AuthException("Unable to register the user!");
     }
-    User mappedUser = userMapper.getUser(requestUser);
-    mappedUser.setPassword(passwordEncoder.encode(mappedUser.getPassword()));
-    User savedUser = userRepository.save(mappedUser);
-
-    Cookie refreshTokenCookie = cookieService.makeRefreshTokenCookie(
-        tokenService.getRefreshToken(savedUser)
-    );
-
-    return RegisterResponse.builder()
-        .token(tokenService.getAccessToken(savedUser))
-        .refreshTokenCookie(refreshTokenCookie)
-        .build();
   }
 
   public LoginResponse login(LoginRequest request) {
-
-    User userByEmail = userRepository.findByEmail(request.getEmail())
-        .orElseThrow(() -> new AuthException("User not found"));
-
-    if (!passwordEncoder.matches(request.getPassword(), userByEmail.getPassword())) {
-      throw new AuthException("Wrong password");
-    }
-
-    String accessToken = tokenService.getAccessToken(userByEmail);
-    String refreshToken = tokenService.getRefreshToken(userByEmail);
-
-    Cookie refreshTokenCookie = cookieService.makeRefreshTokenCookie(refreshToken);
+    TokenResponse tokenResponse = keycloakAdminClientService.loginKeycloakUser(
+        request.getEmail(), request.getPassword());
+    Cookie refreshTokenCookie = cookieService.makeRefreshTokenCookie(
+        tokenResponse.getRefreshToken());
 
     return LoginResponse.builder()
-        .token(accessToken)
-        .refreshTokenCookie(refreshTokenCookie)
-        .build();
+        .token(tokenResponse.getToken())
+        .refreshTokenCookie(refreshTokenCookie).build();
+  }
+
+  public LoginResponse refreshToken(String refreshToken) {
+    TokenResponse tokenResponse = keycloakAdminClientService.refreshToken(refreshToken);
+    Cookie refreshTokenCookie = cookieService.makeRefreshTokenCookie(
+        tokenResponse.getRefreshToken());
+
+    return LoginResponse.builder()
+        .token(tokenResponse.getToken())
+        .refreshTokenCookie(refreshTokenCookie).build();
   }
 }

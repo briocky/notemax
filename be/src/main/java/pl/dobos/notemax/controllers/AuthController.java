@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.dobos.notemax.models.dtos.LoginRequest;
 import pl.dobos.notemax.models.dtos.LoginResponse;
-import pl.dobos.notemax.models.dtos.RefreshTokenResponse;
 import pl.dobos.notemax.models.dtos.RegisterRequest;
 import pl.dobos.notemax.models.dtos.RegisterResponse;
 import pl.dobos.notemax.services.AuthService;
-import pl.dobos.notemax.services.TokenService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,7 +23,6 @@ import pl.dobos.notemax.services.TokenService;
 public class AuthController {
 
   private final AuthService authService;
-  private final TokenService tokenService;
 
   @PostMapping("/register")
   public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest request,
@@ -44,9 +41,11 @@ public class AuthController {
   }
 
   @GetMapping("/refreshToken")
-  public ResponseEntity<RefreshTokenResponse> refreshToken(
-      @CookieValue("refreshToken") @NotNull String refreshToken) {
-    RefreshTokenResponse response = tokenService.refreshToken(refreshToken);
-    return ResponseEntity.ok().body(response);
+  public ResponseEntity<LoginResponse> refreshToken(
+      @CookieValue("refreshToken") @NotNull String refreshToken,
+      HttpServletResponse response) {
+    LoginResponse tokenResponse = authService.refreshToken(refreshToken);
+    response.addCookie(tokenResponse.getRefreshTokenCookie());
+    return ResponseEntity.ok().body(tokenResponse);
   }
 }
