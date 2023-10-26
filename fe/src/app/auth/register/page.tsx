@@ -12,15 +12,45 @@ import Typography from "@mui/material/Typography/Typography";
 import Avatar from "@mui/material/Avatar/Avatar";
 import CssBaseline from "@mui/material/CssBaseline/CssBaseline";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import {signUp} from "@/services/auth-service";
+import {AuthResponse, SignUpDto, UserDto} from "@/types/auth/auth-types";
+import {setAuthentication} from "@/redux/features/auth/auth-slice";
+import {setToken} from "@/services/token-service";
+import {useDispatch} from "react-redux";
+import {useRouter} from "next/navigation";
+import React from "react";
+import Alert from "@mui/material/Alert/Alert";
+import AlertTitle from "@mui/material/AlertTitle/AlertTitle";
 
 export default function Register() {
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const formData = new FormData(event.currentTarget);
+    const userDto: UserDto = {
+      firstName: formData.get('firstName')?.toString(),
+      lastName: formData.get('lastName')?.toString(),
+      email: formData.get('email')?.toString(),
+      password: formData.get('password')?.toString(),
+      confirmPassword: formData.get('confirmPassword')?.toString(),
+    }
+    const registerData: SignUpDto = {user: userDto};
+    signUp(registerData)
+      .then((response: AuthResponse) => {
+        dispatch(setAuthentication(true));
+        setToken(response.token);
+        router.replace('/');
+      })
+      .catch((error) => {
+        let errorMsg = error.response.data;
+        if (errorMsg === "")
+          setErrorMessage("Status code: " + error.response.status);
+        else
+          setErrorMessage(errorMsg);
+      });
   };
 
   return (
@@ -85,12 +115,29 @@ export default function Register() {
                 />
               </Grid>
               <Grid item xs={12}>
+                <TextField
+                    required
+                    fullWidth
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                    id="confirmPassword"
+                    autoComplete="new-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
                 <FormControlLabel
                     control={<Checkbox value="allowExtraEmails" color="primary" />}
                     label="I want to receive marketing promotions and updates via email."
                 />
               </Grid>
             </Grid>
+            {errorMessage && (
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                {errorMessage}
+              </Alert>
+            )}
             <Button
                 type="submit"
                 fullWidth

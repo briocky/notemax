@@ -5,15 +5,20 @@ type LoginDto = {
   password: string | undefined;
 }
 
-type SignUpDto = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+type UserDto = {
+  firstName: string | undefined;
+  lastName: string | undefined;
+  email: string | undefined;
+  password: string | undefined;
+  confirmPassword: string | undefined;
 }
 
-type LoginResponse = {
+type SignUpDto = {
+  user: UserDto;
+}
+
+type AuthResponse = {
   token: string;
 }
 
-export type {LoginDto, SignUpDto, LoginResponse};
+export type {UserDto, LoginDto, SignUpDto, AuthResponse};

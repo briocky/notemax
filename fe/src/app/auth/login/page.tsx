@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Copyright from "@/components/copyright/copyright";
 import {signIn} from "@/services/auth-service";
-import {LoginResponse} from "@/types/auth/auth-types";
+import {AuthResponse, LoginDto} from "@/types/auth/auth-types";
 import {useDispatch} from "react-redux";
 import {setAuthentication} from "@/redux/features/auth/auth-slice";
 import {setToken} from "@/services/token-service";
@@ -27,12 +27,12 @@ export default function Login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const loginData = {
+    const loginData: LoginDto = {
       email: formData.get('email')?.toString(),
       password: formData.get('password')?.toString(),
     };
     signIn(loginData)
-      .then((response: LoginResponse) => {
+      .then((response: AuthResponse) => {
         dispatch(setAuthentication(true));
         setToken(response.token);
         router.replace('/');
