@@ -6,7 +6,7 @@ function setToken(token: string) {
     throw new Error('Token is null!');
   }
 
-  return localStorage.setItem(TOKEN_KEY_NAME, token);
+  return sessionStorage.setItem(TOKEN_KEY_NAME, token);
 }
 
 function deleteToken(token: string) {
@@ -14,7 +14,7 @@ function deleteToken(token: string) {
     throw new Error('Token is null!');
   }
 
-  return localStorage.removeItem(TOKEN_KEY_NAME);
+  return sessionStorage.removeItem(TOKEN_KEY_NAME);
 }
 
 export { setToken, deleteToken };
