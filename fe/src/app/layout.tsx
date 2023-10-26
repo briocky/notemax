@@ -1,11 +1,12 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type {Metadata} from 'next'
+import {Inter} from 'next/font/google'
 import './globals.css'
 import theme from './theme';
 import {ThemeProvider} from "@mui/material";
 import Navbar from "@/components/navbar/navbar";
+import {ReduxProvider} from "@/redux/provider";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({subsets: ['latin']})
 
 export const metadata: Metadata = {
   title: 'Notemax',
@@ -17,12 +18,14 @@ export default function RootLayout({children,}: {
 }) {
   return (
     <html lang="en">
-      <ThemeProvider theme={theme}>
-        <body className={inter.className}>
-          <Navbar />
-          {children}
-        </body>
-      </ThemeProvider>
+      <body className={inter.className}>
+        <ReduxProvider>
+          <ThemeProvider theme={theme}>
+            <Navbar/>
+            {children}
+          </ThemeProvider>
+        </ReduxProvider>
+      </body>
     </html>
   )
 }
