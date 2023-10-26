@@ -2,17 +2,19 @@ package pl.dobos.notemax.models.dtos;
 
 import static lombok.AccessLevel.PRIVATE;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import pl.dobos.notemax.models.enums.AttachmentType;
 
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @FieldDefaults(level = PRIVATE)
-public class RegisterRequest {
+public class AttachmentDto {
 
-  @NotNull
-  UserDto user;
+  Long id;
+  AttachmentType type;
+  String url;
 }

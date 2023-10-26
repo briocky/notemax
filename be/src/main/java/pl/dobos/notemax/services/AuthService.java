@@ -10,6 +10,7 @@ import pl.dobos.notemax.models.dtos.LoginRequest;
 import pl.dobos.notemax.models.dtos.LoginResponse;
 import pl.dobos.notemax.models.dtos.RegisterRequest;
 import pl.dobos.notemax.models.dtos.RegisterResponse;
+import pl.dobos.notemax.models.dtos.UserDto;
 import pl.dobos.notemax.models.dtos.keycloak.TokenResponse;
 
 @Service
@@ -22,8 +23,8 @@ public class AuthService {
 
   public RegisterResponse register(RegisterRequest request) {
 
-    final pl.dobos.notemax.models.dtos.User requestUser = request.getUser();
-    int registerStatus = keycloakAdminClientService.registerKeycloakUser(requestUser);
+    final UserDto requestUserDto = request.getUser();
+    int registerStatus = keycloakAdminClientService.registerKeycloakUser(requestUserDto);
 
     if (registerStatus == HttpStatus.SC_CREATED) {
       log.debug("User registered successfully, getting token...");

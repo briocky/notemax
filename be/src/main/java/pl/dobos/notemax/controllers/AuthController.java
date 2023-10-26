@@ -20,7 +20,7 @@ import pl.dobos.notemax.services.AuthService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthController {
+class AuthController {
 
   private final AuthService authService;
 

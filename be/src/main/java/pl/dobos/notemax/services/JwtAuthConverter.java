@@ -1,4 +1,4 @@
-package pl.dobos.notemax.config;
+package pl.dobos.notemax.services;
 
 import java.util.Collection;
 import java.util.Map;

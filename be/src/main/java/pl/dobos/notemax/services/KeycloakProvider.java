@@ -1,4 +1,4 @@
-package pl.dobos.notemax.config;
+package pl.dobos.notemax.services;
 
 import lombok.Getter;
 import org.keycloak.OAuth2Constants;

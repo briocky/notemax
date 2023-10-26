@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
-import pl.dobos.notemax.config.KeycloakProvider;
 import pl.dobos.notemax.exceptions.AuthException;
-import pl.dobos.notemax.models.dtos.User;
+import pl.dobos.notemax.models.dtos.UserDto;
 import pl.dobos.notemax.models.dtos.keycloak.TokenResponse;
 
 @Service
@@ -27,9 +26,9 @@ public class KeycloakAdminClientService {
   private static final String TOKEN_URI = "/realms/%s/protocol/openid-connect/token";
   private final KeycloakProvider keycloakProvider;
 
-  public int registerKeycloakUser(User requestUser) {
+  public int registerKeycloakUser(UserDto requestUserDto) {
     UsersResource usersResource = keycloakProvider.getRealmResource().users();
-    UserRepresentation userRepresentation = createUserRepresentation(requestUser);
+    UserRepresentation userRepresentation = createUserRepresentation(requestUserDto);
 
     try (Response registerResponse = usersResource.create(userRepresentation)) {
       return registerResponse.getStatus();
@@ -71,16 +70,16 @@ public class KeycloakAdminClientService {
     return passwordCredentials;
   }
 
-  private static UserRepresentation createUserRepresentation(User user) {
+  private static UserRepresentation createUserRepresentation(UserDto userDto) {
     CredentialRepresentation credentialRepresentation = createPasswordCredentials(
-        user.getPassword());
+        userDto.getPassword());
 
     UserRepresentation kcUser = new UserRepresentation();
-    kcUser.setUsername(user.getEmail());
+    kcUser.setUsername(userDto.getEmail());
     kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
-    kcUser.setFirstName(user.getFirstName());
-    kcUser.setLastName(user.getLastName());
-    kcUser.setEmail(user.getEmail());
+    kcUser.setFirstName(userDto.getFirstName());
+    kcUser.setLastName(userDto.getLastName());
+    kcUser.setEmail(userDto.getEmail());
     kcUser.setEnabled(true);
     kcUser.setEmailVerified(false);
 

@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = PRIVATE)
-public class User {
+public class UserDto {
 
   @NotNull
   String firstName;
