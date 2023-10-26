@@ -15,9 +15,15 @@ import Container from '@mui/material/Container';
 import Copyright from "@/components/copyright/copyright";
 import {signIn} from "@/services/auth-service";
 import {LoginResponse} from "@/types/auth/auth-types";
-
+import {useDispatch} from "react-redux";
+import {setAuthentication} from "@/redux/features/auth/auth-slice";
+import {setToken} from "@/services/token-service";
+import {useRouter} from "next/navigation";
 
 export default function Login() {
+  const dispatch = useDispatch()
+  const router = useRouter()
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -26,7 +32,11 @@ export default function Login() {
       password: formData.get('password')?.toString(),
     };
     signIn(loginData)
-      .then((response: LoginResponse) => {console.log(response)});
+      .then((response: LoginResponse) => {
+        dispatch(setAuthentication(true));
+        setToken(response.token);
+        router.replace('/');
+      })
   };
 
   return (
