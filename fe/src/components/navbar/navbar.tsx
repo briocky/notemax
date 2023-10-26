@@ -13,6 +13,8 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import BookIcon from '@mui/icons-material/Book';
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/global-store";
 
 const pages = ['My Notes', 'Favourite', 'Contact'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -21,7 +23,7 @@ function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const [isUserLoggedIn] = React.useState<boolean>(false);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -128,7 +130,7 @@ function Navbar() {
               ))}
             </Box>
 
-            <Box sx={{ flexGrow: 0 }} display={isUserLoggedIn ? 'flex':'none'}>
+            <Box sx={{ flexGrow: 0 }} display={isAuthenticated ? 'flex':'none'}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="User" src="/static/images/avatar/2.jpg" />
@@ -157,7 +159,7 @@ function Navbar() {
                 ))}
               </Menu>
             </Box>
-            <Box display={isUserLoggedIn ? 'none':'flex'} gap={1}>
+            <Box display={isAuthenticated ? 'none':'flex'} gap={1}>
               <Button
                   variant="contained"
                   sx={{ my: 2, color: 'white'}}
