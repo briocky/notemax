@@ -162,7 +162,7 @@ function Navbar() {
             <Box display={isAuthenticated ? 'none':'flex'} gap={1}>
               <Button
                   variant="contained"
-                  sx={{ my: 2, color: 'white'}}
+                  sx={{ my: 2}}
                   color={'secondary'}
                   href={'/auth/login'}
               >
@@ -170,7 +170,7 @@ function Navbar() {
               </Button>
               <Button
                   variant="contained"
-                  sx={{ my: 2, color: 'white'}}
+                  sx={{ my: 2}}
                   color={'secondary'}
                   href={'/auth/register'}
               >

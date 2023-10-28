@@ -1,14 +1,14 @@
 "use client";
-import { createTheme } from '@mui/material/styles';
-import { purple } from '@mui/material/colors';
+import {createTheme} from '@mui/material/styles';
+import {green, grey, teal} from '@mui/material/colors';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: purple[600],
+      main: green[900],
     },
     secondary: {
-      main: "#008F7A",
+      main: teal[100],
     },
   },
 });
