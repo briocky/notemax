@@ -42,7 +42,7 @@ export default function Register() {
       .then((response: AuthResponse) => {
         dispatch(setAuthentication(true));
         setToken(response.token);
-        router.replace('/');
+        router.push('/notes/my-notes');
       })
       .catch((error) => {
         let errorMsg = error.response.data;

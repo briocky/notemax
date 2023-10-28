@@ -35,7 +35,7 @@ export default function Login() {
       .then((response: AuthResponse) => {
         dispatch(setAuthentication(true));
         setToken(response.token);
-        router.replace('/');
+        router.push('/notes/my-notes');
       })
   };
 
