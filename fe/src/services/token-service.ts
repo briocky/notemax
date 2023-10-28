@@ -1,6 +1,10 @@
 
 const TOKEN_KEY_NAME = 'access_token';
 
+function getToken() {
+  return sessionStorage.getItem(TOKEN_KEY_NAME);
+}
+
 function setToken(token: string) {
   if (token === null) {
     throw new Error('Token is null!');
@@ -17,4 +21,4 @@ function deleteToken(token: string) {
   return sessionStorage.removeItem(TOKEN_KEY_NAME);
 }
 
-export { setToken, deleteToken };
+export { setToken, deleteToken, getToken };

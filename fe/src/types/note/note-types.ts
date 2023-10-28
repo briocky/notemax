@@ -1,11 +1,11 @@
 
 
-type Note = {
-  id: number;
-  title: string;
-  content: string;
-  // createdAt: string;
-  // updatedAt: string;
+type NoteDto = {
+  id: number | undefined;
+  title: string | undefined;
+  content: string | undefined;
+  createdAt: string | undefined;
+  updatedAt: string | undefined;
 }
 
-export type {Note};
+export type {NoteDto};
