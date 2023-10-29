@@ -29,11 +29,13 @@ export default function Note({note, removeNodeFromArray}: { note: NoteDto, remov
   return (
       <Paper elevation={3}
              sx={{
-               padding: 2, height: '350px'
+               padding: 2, height: '350px', transition: '0.2s', '&:hover': {cursor: 'pointer'}
              }}>
         <Box display={'flex'} height={'100%'} position={'relative'} flexDirection={'column'}>
           <Box component={'div'} display={'flex'}>
-            <Typography width={'80%'} variant="h6" color="primary" gutterBottom>
+            <Typography width={'80%'} variant="h6" color="primary" gutterBottom
+                        onClick={() => router.push('/notes/' + note.id)}
+                        sx={{'&:hover': {textDecoration: 'underline'}}}>
               {note.title}
             </Typography>
             <Box component={'div'} width={'20%'}>
