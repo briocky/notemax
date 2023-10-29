@@ -21,7 +21,7 @@ import pl.dobos.notemax.services.AuthService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 class AuthController {
 
   private final AuthService authService;
