@@ -5,7 +5,7 @@ type NoteDto = {
   title: string | undefined;
   content: string | undefined;
   createdAt: string | undefined;
-  updatedAt: string | undefined;
+  modifiedAt: string | undefined;
 }
 
 export type {NoteDto};

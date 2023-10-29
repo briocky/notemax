@@ -55,7 +55,7 @@ export default function Note({note, removeNodeFromArray}: { note: NoteDto, remov
             {note.content}
           </Typography>
           <Typography position={'absolute'} bottom={'0'} variant="caption" color="textSecondary">
-            {note.updatedAt ? `Updated: ${note.updatedAt}` : `Created: ${note.createdAt}`}
+            {note.modifiedAt ? `Updated: ${note.modifiedAt}` : `Created: ${note.createdAt}`}
           </Typography>
         </Box>
       </Paper>
