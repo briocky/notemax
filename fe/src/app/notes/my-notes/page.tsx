@@ -22,6 +22,12 @@ export default function MyNotes() {
   const router = useRouter();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
+  function deleteNote(id: number) {
+    if (notes) {
+      setNotes(notes.filter((note) => note.id !== id));
+    }
+  }
+
   useEffect(() => {
     getNotes(page, size)
     .then((notes) => {
@@ -48,7 +54,7 @@ export default function MyNotes() {
           <Grid container spacing={2}>
             {notes.map((note) => (
                 <Grid key={note.id} item xs={12} sm={6} md={4}>
-                  <Note note={note}/>
+                  <Note removeNodeFromArray={deleteNote} note={note}/>
                 </Grid>
             ))}
           </Grid>

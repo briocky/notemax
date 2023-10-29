@@ -19,4 +19,9 @@ async function getNotes(page: number = 0, size: number = 10) {
     });
 }
 
-export {addNote, getNotes};
+async function deleteNote(id: number) {
+  const deleteEndpoint = notesEndpoint + '/' + id;
+  return await authAxios.delete(deleteEndpoint);
+}
+
+export {addNote, getNotes, deleteNote};
