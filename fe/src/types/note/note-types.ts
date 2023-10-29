@@ -1,4 +1,8 @@
 
+type LinkDto = {
+  id: number | undefined;
+  url: string | undefined;
+}
 
 type NoteDto = {
   id: number | undefined;
@@ -6,6 +10,7 @@ type NoteDto = {
   content: string | undefined;
   createdAt: string | undefined;
   modifiedAt: string | undefined;
+  links: LinkDto[] | undefined;
 }
 
-export type {NoteDto};
+export type {NoteDto, LinkDto};

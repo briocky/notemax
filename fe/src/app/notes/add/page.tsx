@@ -7,13 +7,15 @@ import AddIcon from '@mui/icons-material/Add';
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import * as React from "react";
-import {NoteDto} from "@/types/note/note-types";
+import {LinkDto, NoteDto} from "@/types/note/note-types";
 import {addNote} from "@/services/note-service";
 import {useRouter} from "next/navigation";
 import Alert from "@mui/material/Alert/Alert";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function AddNote() {
-
+  const [links, setLinks] = React.useState<LinkDto[]>([] as LinkDto[]);
+  const [newLink, setNewLink] = React.useState<string>('');
   const [createdNote, setCreatedNote] = React.useState<NoteDto | null>(null);
   const router = useRouter();
 
@@ -22,7 +24,8 @@ export default function AddNote() {
     const formData = new FormData(event.currentTarget);
     const note: NoteDto = {
       title: formData.get('title')?.toString(),
-      content: formData.get('content')?.toString()
+      content: formData.get('content')?.toString(),
+      links: links
     } as NoteDto;
 
     addNote(note)
@@ -32,6 +35,18 @@ export default function AddNote() {
         router.replace('/notes/my-notes');
       }, 3000)
     })
+  }
+
+  function handleAddLink() {
+    if (newLink) {
+      setLinks([...links, {url: newLink} as LinkDto]);
+      setNewLink('');
+    }
+  }
+
+  function handleDeleteLink(linkId: number) {
+    const updatedLinks = links.filter((link, idx) => idx !== linkId);
+    setLinks(updatedLinks);
   }
 
   return (
@@ -57,9 +72,18 @@ export default function AddNote() {
               required/>
           <Box>
             <Typography variant="h6" color="primary" gutterBottom>
-              Attachments
+              Links
             </Typography>
-            <Button variant={'outlined'} startIcon={<AddIcon/>}>Add</Button>
+            {links.map((link, idx) => (
+                <Box key={idx} component={'div'} display={'flex'} justifyContent={'space-between'} alignItems={'center'} mb={2}>
+                  <Typography variant={'body1'}>{(idx+1) + ". " + link.url}</Typography>
+                  <Button onClick={() => handleDeleteLink(idx)} variant={'outlined'} startIcon={<DeleteIcon/>}>Delete</Button>
+                </Box>
+            ))}
+            <Box component={'div'} display={'flex'}>
+              <TextField placeholder={'Type your link'} size={'small'} variant={'outlined'} fullWidth value={newLink} onChange={(e) => setNewLink(e.target.value)}/>
+              <Button sx={{ml: 1}} onClick={() => handleAddLink()} variant={'outlined'} startIcon={<AddIcon/>}>Add</Button>
+            </Box>
           </Box>
           <Box display={'flex'} justifyContent={'end'}>
             <Link href={'/notes/my-notes'}>

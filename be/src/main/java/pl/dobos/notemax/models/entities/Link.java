@@ -6,8 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -16,25 +14,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import pl.dobos.notemax.models.enums.AttachmentType;
 
 @Entity
-@Table(name = "attachments")
+@Table(name = "links")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = PRIVATE)
-public class Attachment {
+public class Link {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_id_seq")
-  @SequenceGenerator(name = "attachment_id_seq", sequenceName = "attachment_id_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "link_id_seq")
+  @SequenceGenerator(name = "link_id_seq", sequenceName = "link_id_seq", allocationSize = 1)
   Long id;
-  AttachmentType type;
   String url;
-  @ManyToOne
-  @JoinColumn(name = "note_id")
-  Note note;
 }

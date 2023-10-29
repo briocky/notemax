@@ -28,5 +28,5 @@ public class NoteDto {
   NoteCategory category;
   LocalDateTime createdAt;
   LocalDateTime modifiedAt;
-  List<AttachmentDto> attachments;
+  List<LinkDto> links;
 }

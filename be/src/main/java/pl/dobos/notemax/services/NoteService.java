@@ -12,6 +12,7 @@ import pl.dobos.notemax.exceptions.NoteNotFoundException;
 import pl.dobos.notemax.mappers.NoteMapper;
 import pl.dobos.notemax.models.dtos.NoteDto;
 import pl.dobos.notemax.models.entities.Note;
+import pl.dobos.notemax.repositories.LinkRepository;
 import pl.dobos.notemax.repositories.NoteRepository;
 
 @Service
@@ -21,6 +22,7 @@ public class NoteService {
   private static final String ELEMENT_CANNOT_BE_NULL = "%s cannot be null";
 
   private final NoteRepository noteRepository;
+  private final LinkRepository linkRepository;
   private final CurrentUserService currentUserService;
   private final NoteMapper noteMapper;
 
@@ -68,7 +70,11 @@ public class NoteService {
     note.setAuthorId(currentUserId);
     note.setCreatedAt(noteById.getCreatedAt());
     note.setModifiedAt(getCurrentDateTime());
-
+    noteById.getLinks().forEach(oldLink ->
+      note.getLinks().stream()
+          .filter(link -> oldLink.getId().equals(link.getId()))
+          .forEach(link -> linkRepository.deleteById(link.getId()))
+    );
     Note savedNote = noteRepository.save(note);
 
     return noteMapper.getNoteDto(savedNote);
