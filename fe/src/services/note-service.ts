@@ -1,19 +1,19 @@
-import {axiosInstanceWithAuth as axios} from "@/services/axios/axios";
+import {authAxios} from "@/services/axios/axios";
 import {NoteDto} from "@/types/note/note-types";
 
 const notesEndpoint = 'api/notes';
 
 async function addNote(note: NoteDto) {
   const addEndpoint = notesEndpoint + '/new';
-  return await axios.post<NoteDto>(addEndpoint, note)
+  return await authAxios.post<NoteDto>(addEndpoint, note)
     .then((response) => {
       return response.data;
     });
 }
 
-async function getNotes() {
+async function getNotes(page: number = 0, size: number = 10) {
   const getAllEndpoint = notesEndpoint + '/all';
-  return await axios.get<NoteDto[]>(getAllEndpoint)
+  return await authAxios.get<NoteDto[]>(getAllEndpoint, {params: {page: page, size: size}})
     .then((response) => {
       return response.data;
     });
